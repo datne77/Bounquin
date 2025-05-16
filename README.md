@@ -16,27 +16,7 @@ Công nghệ sử dụng
 - SQL Server
 - Bootstrap 5
 - jQuery, AJAX
-- Toastr & SweetAlert2 cho alert đẹp
-
-Kiến trúc dự án
-
-- Kiến trúc **Service - Repository**
-- Tách biệt rõ các lớp: Controller, Service, Repository, ViewModels
-- Sử dụng PartialView và AJAX để tối ưu trải nghiệm người dùng
-
-Cách chạy dự án
-
-1. Clone repository:
-    ```bash
-    git clone https://github.com/datne77/Bounquin.git
-    ```
-
-2. Mở file `Bounquin.sln` bằng Visual Studio
-
-3. Kiểm tra chuỗi kết nối DB (`Web.config`) và khởi tạo CSDL nếu cần
-
-4. Chạy ứng dụng (`F5` hoặc `Ctrl + F5`)
-
+  
 Ghi chú
 
 - Bạn cần SQL Server hoặc LocalDB để chạy CSDL
