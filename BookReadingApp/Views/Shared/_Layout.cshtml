@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bouquin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BookReadingApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    @RenderSection("Styles", required: false)
+
+
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    @{
+        var isLoggedIn = User?.Identity != null && User.Identity.IsAuthenticated;
+        var userName = isLoggedIn ? User.Identity.Name.Split('@')[0] : "";
+        var isAdmin = isLoggedIn && User.IsInRole("Admin");
+        var avatar = Url.Content(ViewBag.AvatarPath ?? "/uploads/default-avatar.png");
+    }
+
+    <header class="bg-white border-bottom shadow-sm py-2">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center flex-wrap">
+            <!-- Bên trái -->
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <!-- Logo Bouquin -->
+                <a class="navbar-brand fw-bold bouquin-logo fs-3 text-dark" asp-controller="Book" asp-action="Index">
+                    Bouquin
+                </a>
+
+                @if (isLoggedIn)
+                {
+                    <!-- Dropdown Điều hướng -->
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle text-dark fw-medium" href="#" data-bs-toggle="dropdown">Điều hướng</a>
+                        <ul class="dropdown-menu">
+                            @if (ViewBag.Categories != null && ((List<Category>)ViewBag.Categories).Any())
+                            {
+                                foreach (var category in ViewBag.Categories)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("FilterByCategory", "Book", new { categoryId = category.Id })">@category.Name</a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li><span class="dropdown-item text-muted">Không có thể loại</span></li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Dropdown Cộng đồng -->
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle text-dark fw-medium" href="#" data-bs-toggle="dropdown">Cộng đồng</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="About">Giới thiệu</a></li>
+                            <li><a class="dropdown-item" asp-controller="Home" asp-action="Privacy">Chính sách</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Tìm kiếm -->
+                    <form class="d-flex position-relative" method="get" action="@Url.Action("Search", "Book")" autocomplete="off">
+                        <div class="input-group">
+                            <input class="form-control" type="search" name="query" placeholder="Tìm kiếm..." required />
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="suggestionBox" class="list-group position-absolute w-100 shadow" style="top:100%; z-index:9999; display:none;"></div>
+                    </form>
+                }
+            </div>
+
+            <!-- Bên phải -->
+            <div class="d-flex align-items-center gap-3 mt-2 mt-lg-0">
+                @if (isLoggedIn)
+                {
+                    <!-- Nút thêm sách -->
+                    <a asp-controller="Book" asp-action="Create" class="btn btn-outline-secondary">+ Thêm sách</a>
+
+                    <!-- Avatar + Dropdown menu -->
+                    <div class="dropdown">
+                        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <img src="@avatar" alt="avatar" class="rounded-circle" width="36" height="36" style="object-fit:cover;" onerror="this.src='/uploads/default-avatar.png'" />
+                            <span class="text-dark fw-medium">@userName</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">👤 Trang cá nhân</a></li>
+                            @if (isAdmin)
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">🛠️ Quản trị</a></li>
+                                <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">📂 Quản lý thể loại</a></li>
+                            }
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="dropdown-item m-0">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link text-danger p-0">🚪 Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <!-- Đăng nhập + Đăng ký -->
+                    <a class="btn btn-outline-dark" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                    <a class="btn btn-warning" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                }
+            </div>
+        </div>
+    </header>
+
+
+
+
+    <div class="content-wrapper">
+        <main class="flex-grow-1 main-wrapper mt-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer mt-auto py-3 bg-warning text-center">
+        <div class="container">
+            &copy; 2025 - Bouquin </a>
+            <p class="footer-quote">“Sách là cửa sổ nhìn ra thế giới” – Gorky</p>
+        </div>
+    </footer>
+    <style>
+        /* ================= HEADER ================= */
+        .header {
+            background: linear-gradient(to bottom, #FDF6E3, #F5E1C9) !important;
+            color: #5D4037 !important;
+            padding: 12px 20px !important;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+
+        /* ========== LOGO BOUQUIN ========== */
+        .bouquin-logo {
+            font-family: 'Great Vibes', cursive !important;
+            font-size: 48px !important;
+            font-weight: bold !important;
+            color: #5D4037 !important;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3) !important;
+            letter-spacing: 2px !important;
+            transition: all 0.3s ease-in-out !important;
+            display: inline-block !important;
+            padding: 8px 16px !important;
+            border-radius: 10px !important;
+        }
+
+            .bouquin-logo:hover {
+                color: #D2691E !important;
+                transform: scale(1.08) !important;
+                text-shadow: 4px 4px 10px rgba(210, 105, 30, 0.5) !important;
+            }
+
+        /* ========== SEARCH BOX ========== */
+        .search-box {
+            max-width: 280px !important;
+        }
+
+        .btn-search {
+            background-color: #CCCCCC !important;
+            color: white !important;
+            border-radius: 0 8px 8px 0 !important;
+            font-size: 16px !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+
+            .btn-search:hover {
+                background-color: #A0522D !important;
+            }
+
+        /* ========== NAVIGATION LINKS ========== */
+        .nav-links {
+            text-align: center !important;
+            margin-top: 10px !important;
+        }
+
+            .nav-links .nav-link {
+                padding: 6px 12px !important;
+                font-size: 18px !important;
+                color: #6D4C41 !important;
+                font-weight: 500 !important;
+                transition: color 0.3s ease-in-out !important;
+            }
+
+                .nav-links .nav-link:hover {
+                    color: #D2691E !important;
+                }
+
+        .main-wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-left: 70px;
+            padding-right: 70px;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: linear-gradient(to right, #5A3825, #8B5A2B) !important;
+            color: #E3C79B !important;
+            text-align: center !important;
+            padding: 20px 0 !important;
+            box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.2) !important;
+            font-family: 'Garamond', serif !important;
+            font-size: 16px !important;
+            border-top: 3px solid #E3C79B !important;
+        }
+
+            .footer a {
+                color: #FFD700 !important;
+                text-decoration: none !important;
+                font-weight: bold !important;
+                transition: color 0.3s ease-in-out !important;
+            }
+
+                .footer a:hover {
+                    text-decoration: underline !important;
+                    color: #FFA500 !important;
+                }
+
+        .footer-quote {
+            font-style: italic !important;
+            font-size: 20px !important;
+            color: #FAF3DD !important;
+            margin-top: 10px !important;
+        }
+
+        /* ================= FOOTER EFFECT ================= */
+        footer::before {
+            content: "" !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: url('link-to-pattern.png') repeat, #5A3825 !important;
+            opacity: 0.1 !important;
+        }
+
+        /* Icon trước Chính sách bảo mật */
+        .footer a::before {
+            content: "\f02d" !important;
+            font-family: "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+            margin-right: 5px !important;
+        }
+
+
+    </style> 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+
+
+    <script>
+        $(function () {
+            var success = '@TempData["SuccessMessage"]';
+            var error = '@TempData["ErrorMessage"]';
+
+            if (success && success !== '') {
+                toastr.success(success);
+            }
+            if (error && error !== '') {
+                toastr.error(error);
+            }
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownButton = document.querySelector("#dropdownMenuButton");
+            const categoryLinks = document.querySelectorAll(".category-filter");
+
+            // Khi chọn một thể loại, điều hướng ngay mà không lưu sessionStorage
+            categoryLinks.forEach(item => {
+                item.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    let categoryId = this.getAttribute("data-category");
+
+                    if (!categoryId) {
+                        console.error("Lỗi: categoryId không hợp lệ");
+                        return;
+                    }
+
+                    // Xóa sessionStorage (nếu vẫn còn)
+                    sessionStorage.clear();
+                    localStorage.clear();
+
+                    // Điều hướng đến URL mới
+                    window.location.href = `/Book/FilterByCategory?categoryId=${categoryId}`;
+                });
+            });
+
+            // Lấy thể loại từ URL khi tải trang và cập nhật dropdown
+            let urlParams = new URLSearchParams(window.location.search);
+            let selectedCategoryId = urlParams.get("categoryId");
+
+            if (selectedCategoryId) {
+                let selectedCategoryElement = document.querySelector(`[data-category='${selectedCategoryId}']`);
+                if (selectedCategoryElement) {
+                    dropdownButton.textContent = selectedCategoryElement.textContent.trim();
+                }
+            }
+        });
+        document.addEventListener("scroll", function () {
+            let header = document.querySelector(".header");
+            if (window.scrollY > 50) {
+                header.classList.add("fixed");
+            } else {
+                header.classList.remove("fixed");
+            }
+        });
+    </script>
+    
+    <!-- JS xử lý gợi ý tìm kiếm có ảnh -->
+    <script>
+                function highlightMatch(text, keyword) {
+            if (!keyword) return text;
+            const pattern = new RegExp(`(${keyword})`, 'gi');
+            return text.replace(pattern, `<mark style="background-color: #fff3cd;">$1</mark>`);
+        }
+
+        $(document).ready(function () {
+            let $input = $("input[name='query']");
+            let $box = $("<div></div>").addClass("list-group position-absolute shadow").css({
+                zIndex: 9999,
+                width: "100%",
+                top: "100%",
+            }).insertAfter($input).hide();
+
+            $input.on("input", function () {
+                let query = $(this).val();
+                if (query.length < 2) {
+                    $box.hide();
+                    return;
+                }
+
+                $.get('/Book/AutoComplete', { term: query }, function (data) {
+                    let html = '';
+                    if (data.length === 0) {
+                        html = '<a class="list-group-item disabled">Không tìm thấy sách</a>';
+                    } else {
+                        data.forEach(b => {
+                            html += `
+                                <a href="/Book/Details/${b.id}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                                    <img src="${b.cover}" alt="cover" style="width:40px;height:60px;object-fit:cover;border-radius:4px;">
+                                    <span>${highlightMatch(b.title, query)}</span>
+                                </a>`;
+                        });
+                    }
+                    $box.html(html).show();
+                });
+            });
+
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest($box).length && !$(e.target).is($input)) {
+                    $box.hide();
+                }
+            });
+        });
+    </script>
+
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

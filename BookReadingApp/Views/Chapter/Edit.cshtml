@@ -1,0 +1,82 @@
+﻿@model BookReadingApp.Models.Chapter
+
+@{
+    ViewData["Title"] = "Chỉnh sửa chương";
+}
+
+<h2 class="mb-3 text-center">✏️ Chỉnh sửa Chương</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<form asp-action="Edit" method="post" class="edit-chapter-form">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="BookId" />
+
+    <div class="mb-3">
+        <label class="form-label">📌 Tiêu đề chương:</label>
+        <input asp-for="Title" class="form-control" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">📖 Nội dung chương:</label>
+        <textarea asp-for="Content" class="form-control chapter-content-box" rows="10" required></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" asp-route-bookId="@Model.BookId" class="btn btn-secondary">🔙 Quay lại</a>
+        <button type="submit" class="btn btn-success">💾 Lưu thay đổi</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<!-- CSS -->
+<style>
+    .edit-chapter-form {
+        max-width: 700px;
+        margin: auto;
+        padding: 20px;
+        background: #fffaf0;
+        border-radius: 10px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #5D4037;
+    }
+
+    .chapter-content-box {
+        font-family: 'Georgia', serif;
+        font-size: 16px;
+        line-height: 1.6;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .btn-success {
+        background-color: #6A4F4B;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .btn-success:hover {
+            background-color: #8D6E63;
+            transform: scale(1.05);
+        }
+</style>

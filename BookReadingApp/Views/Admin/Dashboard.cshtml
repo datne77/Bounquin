@@ -1,0 +1,38 @@
+﻿<h2 class="mb-4">👋 Chào mừng Admin!</h2>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>📚 Sách</h5>
+            <a asp-action="Index" asp-controller="Book" class="btn btn-outline-primary mt-2">Quản lý Sách</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>👤 Người dùng</h5>
+            <a href="@Url.Action("ManageUsers", "Admin")" class="btn btn-outline-secondary mt-2">Quản lý Người dùng</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>🚨 Báo cáo</h5>
+            <a asp-action="ReportList" asp-controller="Admin" class="btn btn-outline-danger mt-2">Xem Báo Cáo</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>🖼️ Banner</h5>
+            <a asp-action="Index" asp-controller="BannerSlide" class="btn btn-outline-warning mt-2">Quản lý Banner</a>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h5>🏛️ Kinh điển</h5>
+            <a asp-action="Index" asp-controller="ClassicBook" class="btn btn-outline-dark mt-2">Quản lý Kinh điển</a>
+        </div>
+    </div>
+
+</div>

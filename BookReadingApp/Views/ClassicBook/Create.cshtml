@@ -1,0 +1,37 @@
+﻿@model BookReadingApp.Models.ClassicBookEntry
+@{
+    ViewBag.Title = "Thêm Tác phẩm Kinh điển";
+    var grouped = ViewBag.GroupedBooks as List<BookDropdownGroupViewModel>;
+}
+
+<h2>📚 Thêm tác phẩm kinh điển</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="BookId" class="form-label">Chọn sách</label>
+        <select asp-for="BookId" class="form-control" id="book-select" name="BookId">
+            <option disabled selected>-- Chọn một sách --</option>
+            @foreach (var group in grouped)
+            {
+                <optgroup label="@group.CategoryName">
+                    @foreach (var book in group.Books)
+                    {
+                        <option value="@book.Id">@book.Title</option>
+                    }
+                </optgroup>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DisplayOrder" class="form-label">Thứ tự hiển thị</label>
+        <input asp-for="DisplayOrder" class="form-control" type="number" min="0" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>

@@ -1,0 +1,63 @@
+﻿@using System.Security.Claims
+@model BookReadingApp.Models.Book
+
+<h2 class="mb-3">📖 Thêm Sách Mới</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="pb-5 mt-4">
+    <!-- Gán UserId từ ClaimsPrincipal nếu có -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        <input type="hidden" asp-for="UserId" value="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value" />
+    }
+
+    <div class="mb-3">
+        <label for="Title" class="form-label">📌 Tiêu đề sách:</label>
+        <input id="Title" asp-for="Title" class="form-control" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">📖 Mô tả sách:</label>
+        <textarea id="Description" asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="Author" class="form-label">✍️ Tác giả:</label>
+        <input id="Author" asp-for="Author" class="form-control" required />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="CategoryId" class="form-label">📂 Chọn thể loại:</label>
+        <select id="CategoryId" asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control" required>
+            <option value="">-- Chọn thể loại --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="coverImage" class="form-label">🖼️ Ảnh bìa sách:</label>
+        <input id="coverImage" type="file" name="coverImage" class="form-control" accept="image/*" />
+        <span class="text-muted">Chọn ảnh bìa sách (tùy chọn).</span>
+
+        @if (!string.IsNullOrEmpty(Model?.CoverImageUrl))
+        {
+            <div class="mt-2">
+                <img src="@Model.CoverImageUrl" alt="Ảnh bìa sách" class="img-thumbnail" style="max-width: 150px;" />
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">📌 Lưu sách</button>
+    <a asp-action="Index" class="btn btn-secondary">🔙 Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,144 @@
+﻿/* ==============================
+   🌟 CẤU TRÚC TỔNG THỂ TRANG
+   ============================== */
+html, body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+header {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.container {
+    flex: 1;
+    height: 100%;
+}
+
+main {
+    min-height: 75vh;
+    padding-bottom: 50px;
+    flex: 1;
+}
+
+/* ==============================
+   🌟 HEADER (THANH ĐIỀU HƯỚNG)
+   ============================== */
+.navbar {
+    background-color: #f5f5f5 !important;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #0077cc !important;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.navbar a {
+    color: #333 !important;
+    text-decoration: none;
+}
+
+
+
+.navbar-nav .nav-link {
+    color: #242424 !important;
+    font-weight: 600;
+    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #e68900 !important;
+        transform: scale(1.05);
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+body {
+    padding-top: 1px; /* Đảm bảo nội dung không bị che bởi Navbar */
+}
+
+/* ==============================
+   🌟 BORDER & BACKGROUND FIXES
+   ============================== */
+.border-bottom {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+/*
+.bg-white {
+    background-color: white !important;
+}
+*/
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+}
+
+/* ==============================
+   🌟 FOOTER (KHÔNG ĐÈ LÊN NỘI DUNG)
+   ============================== */
+footer {
+    background-color: #00eefe !important;
+    color: white !important;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    position: relative !important;
+    bottom: 0;
+    left: 0;
+}
+
+/* ==============================
+   🌟 FORM STYLES
+   ============================== */
+.form-control {
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+/* ==============================
+   🌟 BUTTON FIXES
+   ============================== */
+.btn-login, .btn-register {
+    background-color: transparent !important;
+    color: black !important;
+    border: 2px solid black !important;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+    .btn-login:hover, .btn-register:hover {
+        background-color: black !important;
+        color: white !important;
+    }
+
+/* ==============================
+   🌟 RESPONSIVE FIXES
+   ============================== */
+@media (max-width: 768px) {
+    .book-card img {
+        height: 200px;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    body {
+        padding-top: 60px;
+    }
+}

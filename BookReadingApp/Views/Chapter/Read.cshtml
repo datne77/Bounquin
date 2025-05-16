@@ -1,0 +1,185 @@
+﻿@model BookReadingApp.Models.Chapter
+@using System.Security.Claims
+@{
+    ViewData["Title"] = Model.Title;
+    var previousChapterId = ViewBag.PreviousChapterId;
+    var nextChapterId = ViewBag.NextChapterId;
+}
+
+
+
+<div class="reading-container">
+    <h2 class="chapter-title">📖 @Model.Title</h2>
+    <p class="chapter-meta">Ngày đăng: @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
+
+    <div class="chapter-content">
+        @Html.Raw(Model.Content.Replace("\n", "<br/>")) <!-- Định dạng nội dung có xuống dòng -->
+    </div>
+
+    <div class="chapter-navigation">
+        @if (ViewBag.PreviousChapter != null)
+        {
+            <a asp-action="Read" asp-route-bookId="@Model.BookId" asp-route-chapterId="@ViewBag.PreviousChapter.Id" class="btn btn-primary">⬅ Chương Trước</a>
+        }
+        <a asp-action="Index" asp-route-bookId="@Model.BookId" class="btn btn-secondary">📚 Danh sách chương</a>
+        @if (ViewBag.NextChapter != null)
+        {
+            <a asp-action="Read" asp-route-bookId="@Model.BookId" asp-route-chapterId="@ViewBag.NextChapter.Id" class="btn btn-primary">Chương Tiếp ➡</a>
+        }
+    </div>
+    
+
+    <!-- Bình luận -->
+    <div class="comment-section">
+        <h3>💬 Bình luận</h3>
+        <form asp-action="AddComment" method="post">
+            <input type="hidden" name="bookId" value="@ViewBag.Book.Id" /> <!-- ✅ Đảm bảo có bookId -->
+            <input type="hidden" name="chapterId" value="@Model.Id" />
+            <textarea name="content" class="form-control" placeholder="Nhập bình luận của bạn..." required></textarea>
+            <button type="submit" class="btn btn-success mt-2">📩 Gửi bình luận</button>
+        </form>
+
+        @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
+        {
+            <ul class="comment-list">
+                @foreach (var comment in ViewBag.Comments)
+                {
+                    <li class="comment-item">
+                        <div class="comment-avatar">
+                            <img src="@(string.IsNullOrEmpty(comment.ProfilePictureUrl) ? "/images/default-avatar.png" : comment.ProfilePictureUrl)"
+                                 alt="Avatar" class="avatar-img">
+                        </div>
+                        <div class="comment-content">
+                            <strong>@(string.IsNullOrEmpty(comment.UserFullName) ? "Người dùng ẩn danh" : comment.UserFullName)</strong>
+                            <p>@comment.Content</p>
+                            <span class="comment-date">@comment.CreatedDate.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.FindFirst(ClaimTypes.NameIdentifier)?.Value == comment.UserId))
+                        {
+                            <form asp-action="DeleteComment" method="post" class="delete-comment-form">
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <input type="hidden" name="chapterId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">🗑️ Xóa</button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted">📌 Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
+        }
+    </div>
+
+</div>
+
+<!-- CSS -->
+<style>
+    .reading-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background: #fffaf0;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .chapter-title {
+        text-align: center;
+        font-size: 28px;
+        color: #d35400;
+        font-weight: bold;
+    }
+
+    .chapter-meta {
+        text-align: center;
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+
+    .chapter-content {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #333;
+        text-align: justify;
+        padding: 15px;
+        background: #fff;
+        border-radius: 5px;
+    }
+
+    .chapter-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .comment-section {
+        margin-top: 40px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .comment-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .comment-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .comment-avatar {
+        margin-right: 10px;
+    }
+
+    .avatar-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .comment-content {
+        flex-grow: 1;
+    }
+
+    .comment-date {
+        font-size: 12px;
+        color: #888;
+    }
+
+</style>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Cuộn tự động đến vị trí đã đọc trước đó
+        let savedScroll = localStorage.getItem("scrollPosition");
+        if (savedScroll) {
+            window.scrollTo(0, parseInt(savedScroll));
+        }
+
+        // Lưu vị trí cuộn khi rời trang
+        window.addEventListener("beforeunload", function () {
+            localStorage.setItem("scrollPosition", window.scrollY);
+        });
+    });
+</script>
+<script>
+    function showLastViewedTime() {
+        var lastViewedTime = '@ViewBag.LastViewedTime';
+        if (lastViewedTime && lastViewedTime !== '') {
+            alert("⏱️ Lần xem gần nhất: " + lastViewedTime);
+        } else {
+            alert("🤔 Chưa có thông tin lần xem gần nhất.");
+        }
+    }
+</script>

@@ -1,0 +1,44 @@
+﻿@model BookReadingApp.Models.BannerSlide
+@{
+    ViewBag.Title = "Thêm Banner Mới";
+}
+
+<h2 class="mb-4">➕ Thêm Banner Mới</h2>
+
+<form asp-action="Create" enctype="multipart/form-data" method="post">
+    <div class="mb-3">
+        <label>Tiêu đề</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Mô tả phụ</label>
+        <input asp-for="Subtitle" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Ảnh banner</label>
+        <input type="file" name="imageFile" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Liên kết tới sách</label>
+        <select asp-for="LinkToBookId" asp-items="ViewBag.Books" class="form-select">
+            <option value="">-- Không liên kết --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Thứ tự hiển thị</label>
+        <input asp-for="SortOrder" class="form-control" type="number" value="0" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" asp-for="IsActive" />
+        <label class="form-check-label">Hiển thị banner</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅ Quay lại</a>
+</form>

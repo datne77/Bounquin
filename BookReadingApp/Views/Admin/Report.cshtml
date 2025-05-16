@@ -1,0 +1,19 @@
+﻿@model Report
+
+<h2>🚨 Chi tiết Báo Cáo Sách</h2>
+
+<div class="report-container">
+    <h4>Tên sách: <strong>@Model.Book.Title</strong></h4>
+    <p>Tác giả: @Model.Book.Author</p>
+    <p>Chủ sở hữu: @Model.Book.User.FullName (@Model.Book.User.Email)</p>
+    <p>📅 Ngày tạo: @Model.Book.CreatedDate.ToString("dd/MM/yyyy")</p>
+    <p>📌 <strong>Lý do báo cáo:</strong> @Model.Reason</p>
+    <p>👤 <strong>Người báo cáo:</strong> @(string.IsNullOrEmpty(Model.Reporter.FullName) ? Model.Reporter.Email.Split('@')[0] : Model.Reporter.FullName)</p>
+    <p>📅 <strong>Thời gian báo cáo:</strong> @Model.ReportedDate.ToString("dd/MM/yyyy HH:mm")</p>
+
+    <a asp-action="Delete" asp-controller="Book" asp-route-id="@Model.Book.Id" class="btn btn-danger"
+       onclick="return confirm('Bạn có chắc muốn xóa sách này?');">
+        🗑️ Xóa Sách
+    </a>
+    <a asp-action="ReportList" class="btn btn-secondary">⬅ Quay lại</a>
+</div>

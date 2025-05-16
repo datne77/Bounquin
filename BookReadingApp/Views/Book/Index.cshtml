@@ -1,0 +1,335 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Trang chủ";
+    var booksByCategory = ViewBag.BooksByCategory as Dictionary<int, List<BookReadingApp.Models.Book>> ?? new();
+    var categories = ViewBag.Categories as List<BookReadingApp.Models.Category> ?? new();
+    var recommended = ViewBag.RecommendedBooks as List<BookReadingApp.Models.Book> ?? new();
+    var completed = ViewBag.CompletedBooks as List<BookReadingApp.Models.Book> ?? new();
+    var reading = ViewBag.ReadingBooks as List<Book> ?? new();
+    var banners = ViewBag.SlideBanners as List<BookReadingApp.Models.BannerSlide> ?? new();
+}
+
+<!-- 1. Hero Section - Slide sách nổi bật -->
+@if (banners.Any())
+{
+    <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+            @foreach (var b in banners)
+            {
+                <div class="swiper-slide">
+                    <a asp-controller="Chapter" asp-action="Index" asp-route-bookId="@b.LinkToBookId">
+                        <img src="@b.ImageUrl" alt="@b.Title" class="hero-banner-img" />
+                    </a>
+                </div>
+            }
+
+        </div>
+        
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+}
+<div class="hero-swiper-pagination mt-2"></div>
+
+<!-- 2. Truyện đề xuất -->
+<h2 class="mt-5">Truyện đề xuất</h2>
+<partial name="_BookSwiper" model="recommended" view-data='new ViewDataDictionary(ViewData) { { "IsRecommended", true } }' />
+
+
+<!-- 3. Truyện hoàn thành
+<h2 class="mt-5">✅ Truyện hoàn thành</h2>
+<partial name="_BookSwiper" model="completed" />
+ -->
+<!-- 4. Truyện đang đọc -->
+@if (reading.Count > 0)
+{
+    <h2 class="mt-5">Truyện đang đọc</h2>
+    <partial name="_BookSwiper" model="reading" />
+}
+
+<h2 class="mt-5">Những tác phẩm kinh điển</h2>
+<partial name="_ClassicBookList" model="ViewBag.ClassicBooks" />
+
+<!-- 6. Nhiều truyện hơn dành cho bạn -->
+<h2 class="mt-5">Nhiều truyện hơn dành cho bạn</h2>
+@foreach (var cat in categories)
+{
+    var books = booksByCategory.ContainsKey(cat.Id) ? booksByCategory[cat.Id] : new List<BookReadingApp.Models.Book>();
+    if (books.Count > 0)
+    {
+        <h4 class="mt-4">@cat.Name</h4>
+        <partial name="_BookSwiper" model="books" />
+    }
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Hero Banner Swiper (chạy từng ảnh một, auto slide)
+            if (document.querySelector('.hero-swiper')) {
+                new Swiper('.hero-swiper', {
+                    loop: true,
+                    slidesPerView: 1,
+                    autoplay: {
+                        delay: 5000,
+                    },
+                    navigation: {
+                        nextEl: '.hero-swiper .swiper-button-next',
+                        prevEl: '.hero-swiper .swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.hero-swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }
+
+            // Swiper cho các danh sách sách khác (ví dụ: đề xuất, đang đọc)
+            document.querySelectorAll('.swiper-books').forEach(swiperEl => {
+                new Swiper(swiperEl, {
+                    slidesPerView: 6,
+                    spaceBetween: 16,
+                    navigation: {
+                        nextEl: swiperEl.querySelector('.swiper-button-next'),
+                        prevEl: swiperEl.querySelector('.swiper-button-prev'),
+                    },
+                    breakpoints: {
+                        0: { slidesPerView: 2 },
+                        576: { slidesPerView: 3 },
+                        768: { slidesPerView: 4 },
+                        992: { slidesPerView: 5 },
+                        1200: { slidesPerView: 6 },
+                    },
+                });
+            });
+
+            // Swiper riêng cho phần tác phẩm kinh điển (2 item 1 dòng)
+            if (document.querySelector('.classic-swiper')) {
+                new Swiper('.classic-swiper', {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                    navigation: {
+                        nextEl: '.classic-swiper .swiper-button-next',
+                        prevEl: '.classic-swiper .swiper-button-prev'
+                    },
+                    breakpoints: {
+                        0: { slidesPerView: 1 },
+                        768: { slidesPerView: 2 }
+                    }
+                });
+            }
+        });
+    </script>
+}
+
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        .swiper {
+            width: 100% !important;
+        }
+
+        .swiper-slide {
+            width: 160px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .book-card {
+            background: #fff !important;
+            border-radius: 5px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+            transition: transform 0.2s !important;
+            text-align: center !important;
+        }
+
+            .book-card img {
+                width: 100% !important;
+                height: 240px !important;
+                object-fit: cover !important;
+            }
+
+        .book-card-title {
+            font-weight: bold !important;
+            padding: 10px !important;
+            font-size: 14px !important;
+            color: #333 !important;
+            height: 52px !important; /* Giới hạn chiều cao tương đương 2 dòng */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important; /* ✅ Giới hạn 2 dòng */
+            -webkit-box-orient: vertical !important;
+        }
+
+        .book-card a {
+            text-decoration: none !important;
+        }
+
+            .book-card a:hover {
+                text-decoration: none !important;
+            }
+        .book-card:hover {
+            transform: scale(1.05) !important;
+        }
+
+        .hero-swiper .swiper-slide {
+            transition: transform 0.2s !important;
+            text-align: center !important;
+        }
+
+            .hero-swiper .swiper-slide img {
+                border-radius: 8px !important;
+                height: 400px !important;
+                object-fit: cover !important;
+                width: 100% !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+            }
+
+            .hero-swiper .swiper-slide h5 {
+                font-weight: 700 !important;
+                margin-top: 10px !important;
+            }
+
+            .hero-swiper .swiper-slide p {
+                font-size: 14px !important;
+                color: #666 !important;
+                margin-bottom: 0 !important;
+            }
+
+            .hero-swiper .swiper-slide:hover {
+                transform: scale(1.02) !important;
+            }
+
+        .hero-swiper {
+            max-width: 100%;
+        }
+
+            .hero-swiper .swiper-slide {
+                width: 100% !important;
+            }
+        .hero-banner-overlay {
+            position: absolute;
+            bottom: 20px; /* ✅ Góc trái bên dưới */
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 16px;
+            border-radius: 6px;
+            max-width: 70%;
+        }
+
+        .hero-swiper-pagination {
+            text-align: center;
+            margin-top: 8px; /* chỉ cách nhẹ banner */
+            margin-bottom: 20px; /* nếu cần cách các section dưới */
+        }
+
+            .hero-swiper-pagination .swiper-pagination-bullet {
+                width: 10px;
+                height: 10px;
+                background-color: #ccc;
+                opacity: 1;
+                margin: 0 4px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .hero-swiper-pagination .swiper-pagination-bullet-active {
+                background-color: #000;
+            }
+        /* === CLASSIC SWIPER FIXED === */
+        .classic-swiper {
+            padding: 10px 0;
+        }
+
+            .classic-swiper .swiper-slide {
+                width: auto !important;
+                max-width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .classic-swiper .card {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                max-width: 560px;
+                height: 160px;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+            .classic-swiper img {
+                width: 110px;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .classic-swiper .card-body {
+                padding: 12px 16px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+            }
+
+            .classic-swiper h5 {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0 0 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .classic-swiper p {
+                font-size: 14px;
+                color: #555;
+                line-height: 1.3em;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .classic-swiper .text-muted {
+                font-size: 13px;
+                color: #777 !important;
+            }
+
+            .classic-swiper .swiper-button-prev,
+            .classic-swiper .swiper-button-next {
+                color: #333;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+        @@media (max-width: 768px) {
+            .classic-swiper .card
+
+        {
+            max-width: 100%;
+            flex-direction: column;
+            height: auto;
+        }
+
+        .classic-swiper img {
+            width: 100%;
+            height: 180px;
+        }
+
+        .classic-swiper .card-body {
+            padding: 10px;
+        }
+
+        }
+    </style>
+}
+
+
+
+

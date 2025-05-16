@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ReportViewModel>
+
+<h2>🚨 Danh sách báo cáo</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            
+            <th>Tên sách</th>
+            <th>Người báo cáo</th>
+            <th>Lý do</th>
+            <th>Ngày báo cáo</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var report in Model)
+        {
+            <tr>
+                
+                <td>@report.BookTitle</td>
+                <td>@report.ReporterName</td> <!-- ✅ Hiển thị tên người báo cáo -->
+                <td>@report.Reason</td>
+                <td>@report.ReportedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <a asp-action="Report" asp-route-bookId="@report.BookId" class="btn btn-info">📖 Xem chi tiết</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

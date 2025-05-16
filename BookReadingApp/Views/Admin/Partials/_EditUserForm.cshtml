@@ -1,0 +1,36 @@
+﻿@model List<BookReadingApp.Models.ViewModels.UserViewModel>
+
+<h4>Chọn người dùng cần sửa</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Vai trò</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.FullName</td>
+                <td>@user.Role</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="loadEditForm('@user.Email')">Sửa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="editUserFormContainer"></div>
+
+<script>
+    function loadEditForm(email) {
+        $.get("/Admin/GetUserInfo?email=" + encodeURIComponent(email), function (data) {
+            $("#editUserFormContainer").html(data);
+        });
+    }
+</script>

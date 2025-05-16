@@ -1,0 +1,23 @@
+﻿@model BookReadingApp.ViewModels.RegisterViewModel
+
+<h2>Đăng Ký</h2>
+
+<form asp-action="Register" method="post">
+    <div>
+        <label>Email:</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div>
+        <label>Mật khẩu:</label>
+        <input asp-for="Password" type="password" class="form-control" />
+    </div>
+    <div>
+        <label>Xác nhận mật khẩu:</label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Đăng ký</button>
+</form>
+
+<hr />
+
+<p>Bạn đã có tài khoản? <a asp-action="Login" asp-controller="Account">Đăng nhập ngay</a></p>

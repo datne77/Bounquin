@@ -1,0 +1,21 @@
+﻿@model List<BookReadingApp.Models.ViewModels.UserViewModel>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Quyền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.FullName</td>
+                <td>@user.Role</td>
+            </tr>
+        }
+    </tbody>
+</table>

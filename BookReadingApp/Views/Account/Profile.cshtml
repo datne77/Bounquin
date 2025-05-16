@@ -1,0 +1,69 @@
+﻿@using BookReadingApp.ViewModels
+@model ProfileViewModel
+
+<!-- Import CSS -->
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="@(!string.IsNullOrEmpty(Model.ProfilePictureUrl) ? Model.ProfilePictureUrl : "/images/default-avatar.png")" alt="Avatar">
+        <div style="flex-grow: 1;">
+            <h2>@Model.FullName</h2>
+        </div>
+        <a asp-action="Details" class="btn-wattpad">👁️ Xem chi tiết</a>
+    </div>
+
+    <hr>
+
+    <div class="books-section">
+        <h3>📚 Sách Đã Đăng</h3>
+        @if (Model.Books != null && Model.Books.Count > 0)
+        {
+            <div class="row">
+                @foreach (var book in Model.Books)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="card book-card">
+                            <a asp-action="Index" asp-controller="Chapter" asp-route-bookId="@book.Id" class="book-card-link">
+                            <img src="@(book.CoverImageUrl ?? "/images/default-book-cover.jpg")"
+                                 class="card-img-top" alt="Bìa sách"                
+                                 style="height: 250px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">@book.Title</h5>     
+                                <p class="card-text text-muted">✍️ Tác giả: @book.Author</p>
+                                <p class="card-text"><small class="text-muted">📂 Thể loại: @(book.Category?.Name ?? "Chưa có")</small></p>
+
+                                <div class="d-flex justify-content-between">
+                                    @if (User.IsInRole("Admin") || book.UserId == ViewBag.CurrentUserId)
+                                    {
+                                        <a asp-controller="Book" asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                                        <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-danger">🗑️ Xóa</a>
+                                    }
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">📌 Bạn chưa đăng sách nào.</p>
+        }
+
+    </div>
+</div>
+<style>
+    .book-card-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .book-card-link:hover .card-title {
+            text-decoration: underline;
+        }
+
+
+</style>

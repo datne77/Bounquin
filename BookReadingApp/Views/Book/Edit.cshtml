@@ -1,0 +1,62 @@
+﻿@model BookReadingApp.Models.Book
+
+<main class="container mt-4 pb-5">
+    <h2 class="mb-3 text-center">📖 Chỉnh sửa sách</h2>
+
+    
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <div class="mb-3">
+            <label class="form-label">📌 Tiêu đề sách:</label>
+            <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề..." required />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">📖 Mô tả sách:</label>
+            <textarea asp-for="Description" class="form-control" placeholder="Mô tả về sách..." rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">✍️ Tác giả:</label>
+            <input asp-for="Author" class="form-control" placeholder="Nhập tên tác giả..." required />
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">📂 Chọn thể loại:</label>
+            <select asp-for="CategoryId" class="form-control" required>
+                <option value="">-- Chọn thể loại --</option>
+                @foreach (var category in ViewBag.Categories as List<BookReadingApp.Models.Category>)
+                {
+                    <option value="@category.Id" selected="@(category.Id == Model.CategoryId ? "selected" : null)">
+                        @category.Name
+                    </option>
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">🖼️ Ảnh bìa sách:</label>
+            <input type="file" name="coverImage" class="form-control" accept="image/*" />
+            <span class="text-muted">Chọn ảnh bìa sách (tùy chọn).</span>
+            <br />
+            @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+            {
+                <img src="@Model.CoverImageUrl" alt="Cover Image" class="img-fluid mt-3 rounded shadow"
+                     style="max-width: 200px; display: block; margin: auto;" />
+            }
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary px-4">💾 Lưu thay đổi</button>
+            <a asp-action="Index" class="btn btn-secondary px-4">🔙 Quay lại</a>
+        </div>
+    </form>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

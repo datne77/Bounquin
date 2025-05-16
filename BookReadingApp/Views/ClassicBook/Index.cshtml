@@ -1,0 +1,32 @@
+﻿@model List<BookReadingApp.Models.ClassicBookEntry>
+
+<h2>📚 Danh sách tác phẩm kinh điển</h2>
+<a asp-action="Create" class="btn btn-success mb-3">+ Thêm tác phẩm</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Tiêu đề</th>
+            <th>Thể loại</th>
+            <th>Thứ tự</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Book?.Title</td>
+                <td>@item.Book?.Category?.Name</td>
+                <td>@item.DisplayOrder</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Xoá truyện này khỏi danh sách?')">
+                        <button class="btn btn-sm btn-danger">Xoá</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

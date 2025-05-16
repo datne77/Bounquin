@@ -1,0 +1,42 @@
+﻿@using BookReadingApp.ViewModels
+@model ProfileViewModel
+
+<!-- Import CSS -->
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="profile-container profile-edit-container">
+    <h2>🖊️ Chỉnh sửa thông tin cá nhân</h2>
+
+    <form asp-action="ProfileEdit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Email" />
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ProfilePictureUrl" />
+        <div class="mb-3 text-center">
+            <img src="@(!string.IsNullOrEmpty(Model.ProfilePictureUrl) ? Model.ProfilePictureUrl : "/images/default-avatar.png")"
+                 alt="Avatar" class="profile-img">
+            <br>
+            <label class="form-label mt-2">📸 Thay đổi ảnh đại diện</label>
+            <input type="file" asp-for="ProfilePicture" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">👤 Họ và Tên</label>
+            <input type="text" asp-for="FullName" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">📞 Số Điện Thoại</label>
+            <input type="text" asp-for="PhoneNumber" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">📝 Mô tả bản thân</label>
+            <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn-wattpad">💾 Lưu thay đổi</button>
+            <a asp-action="Profile" class="btn btn-secondary">❌ Hủy</a>
+        </div>
+    </form>
+</div>

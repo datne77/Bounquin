@@ -1,0 +1,80 @@
+﻿body {
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+    .profile-header img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ff4500;
+    }
+
+    .profile-header h2 {
+        color: #ff4500;
+        margin: 0;
+    }
+
+.btn-wattpad {
+    background-color: #ff4500;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.3s;
+}
+
+    .btn-wattpad:hover {
+        background-color: #e03e00;
+    }
+
+.books-section {
+    margin-top: 30px;
+}
+
+.book-card {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+    .book-card:hover {
+        transform: scale(1.03);
+    }
+
+    .book-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .book-card h5 {
+        color: #ff4500;
+    }
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ff4500;
+}

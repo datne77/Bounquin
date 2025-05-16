@@ -1,0 +1,48 @@
+﻿@model BookReadingApp.Models.ViewModels.UserViewModel
+
+<h4>Thêm người dùng mới</h4>
+
+<form id="addUserForm">
+    <div class="form-group">
+        <label>Email</label>
+        <input name="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Mật khẩu</label>
+        <input name="Password" class="form-control" type="password" />
+    </div>
+    <div class="form-group">
+        <label>Họ tên</label>
+        <input name="FullName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Vai trò</label>
+        <select name="Role" class="form-control">
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success mt-2">Thêm</button>
+</form>
+
+<div id="addUserResult" class="mt-2"></div>
+
+<script>
+    $("#addUserForm").submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '@Url.Action("AddUser", "Admin")',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (res) {
+                $("#addUserResult").html('<div class="alert alert-success">' + res + '</div>');
+                $("#addUserForm")[0].reset();
+                loadUserList(); // nếu bạn có hàm load lại danh sách
+            },
+            error: function (xhr) {
+                $("#addUserResult").html('<div class="alert alert-danger">' + xhr.responseText + '</div>');
+            }
+        });
+    });
+</script>

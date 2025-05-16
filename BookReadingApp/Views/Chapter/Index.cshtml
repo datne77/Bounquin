@@ -1,0 +1,147 @@
+﻿@model IEnumerable<BookReadingApp.Models.Chapter>
+@{
+    var isOwner = ViewBag.IsOwner ?? false;
+    var isAdmin = ViewBag.IsAdmin ?? false;
+    var bookId = ViewBag.BookId;
+    var lastReadChapterId = Context.Request.Cookies[$"LastReadChapter_Book_{bookId}"];
+}
+
+<!-- Form ẩn chứa AntiForgeryToken -->
+<form id="tokenForm" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
+
+<h2 class="mb-3">📚 Danh Sách Chương</h2>
+
+@if (isOwner || isAdmin)
+{
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <a asp-action="Edit" asp-controller="Book" asp-route-id="@bookId" class="btn btn-warning">✏️ Sửa Sách</a>
+            <form id="deleteBookForm" asp-action="Delete" asp-controller="Book" asp-route-id="@bookId" method="post" class="d-inline">
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteBook()">🗑️ Xóa Sách</button>
+            </form>
+        </div>
+        @if (!string.IsNullOrEmpty(lastReadChapterId))
+        {
+            <div>
+                <a asp-action="Read" asp-route-bookId="@bookId" asp-route-chapterId="@lastReadChapterId" class="btn btn-outline-info">
+                    ⏱️ Đọc tiếp chương gần nhất
+                </a>
+            </div>
+        }
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <p class="text-muted text-center">📌 Sách hiện chưa có nội dung.</p>
+
+    @if (isOwner || isAdmin)
+    {
+        <div class="text-center">
+            <form asp-action="Report" asp-controller="Admin" method="post">
+                <input type="hidden" name="bookId" value="@bookId" />
+                <textarea name="reason" class="form-control" placeholder="Nhập lý do báo cáo..." required></textarea>
+                <button type="submit" class="btn btn-outline-danger mt-2">📨 Báo cáo với Admin</button>
+            </form>
+        </div>
+    }
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>📌 Tiêu đề</th>
+            <th>📅 Ngày đăng</th>
+            <th>🛠️ Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var chapter in Model.OrderBy(c => c.Id))
+        {
+            <tr>
+                <td>
+                    <a asp-action="Read" asp-route-bookId="@bookId" asp-route-chapterId="@chapter.Id">
+                        📖 @chapter.Title
+                    </a>
+                </td>
+                <td>@chapter.CreatedDate.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (isOwner || isAdmin)
+                    {
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@chapter.Id" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteChapter(@chapter.Id, this)">🗑 Xóa</button>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (isOwner || isAdmin)
+{
+    <a asp-action="Create" asp-controller="Chapter" asp-route-bookId="@bookId" class="floating-add-btn">
+        <i class="fas fa-plus-circle"></i> Thêm Nội Dung
+    </a>
+}
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDeleteChapter(chapterId, btn) {
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: "Chương này sẽ bị xóa vĩnh viễn!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const token = document.querySelector('#tokenForm input[name="__RequestVerificationToken"]')?.value;
+
+                $.ajax({
+                    url: '/Chapter/Delete',
+                    type: 'POST',
+                    data: {
+                        id: chapterId,
+                        __RequestVerificationToken: token
+                    },
+                    success: function (res) {
+                        Swal.fire('Đã xóa!', 'Chương đã được xóa.', 'success');
+                        const row = btn.closest('tr');
+                        if (row) row.remove();
+                        if ($('tbody tr').length === 0) {
+                            $('tbody').append(`<tr><td colspan="4" class="text-center">📌 Chưa có chương nào.</td></tr>`);
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Lỗi!', xhr.responseText || 'Không thể xóa chương.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmDeleteBook() {
+        Swal.fire({
+            title: 'Bạn chắc chắn muốn xóa sách này?',
+            text: "Tất cả chương sẽ bị xóa theo!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Vâng, xóa sách!',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteBookForm').submit();
+            }
+        });
+    }
+</script>

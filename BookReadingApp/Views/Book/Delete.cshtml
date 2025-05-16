@@ -1,0 +1,34 @@
+﻿@model BookReadingApp.Models.Book
+
+<h2 class="mb-3">❌ Xóa sách</h2>
+
+<h4>Bạn có chắc chắn muốn xóa sách: <strong>@Model.Title</strong>?</h4>
+
+<!-- Form xóa -->
+<form id="deleteBookForm" asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="button" class="btn btn-danger" onclick="confirmDelete()">❌ Xóa sách</button>
+    <a asp-action="Index" class="btn btn-secondary">🔙 Quay lại</a>
+</form>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmDelete() {
+        Swal.fire({
+            title: 'Bạn chắc chắn muốn xóa?',
+            text: "Thao tác này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa sách!',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteBookForm').submit();
+            }
+        });
+    }
+</script>

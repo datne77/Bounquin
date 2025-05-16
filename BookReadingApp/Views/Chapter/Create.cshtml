@@ -1,0 +1,27 @@
+﻿@model BookReadingApp.Models.Chapter
+
+<h2 class="mb-3">📖 Thêm Chương Mới</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="pb-5 mt-4">
+    <input type="hidden" asp-for="BookId" value="@ViewBag.BookId" />
+
+    <div class="mb-3">
+        <label for="Title" class="form-label">📌 Tiêu đề chương:</label>
+        <input id="Title" asp-for="Title" class="form-control" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="uploadedFile" class="form-label">📂 Tải lên nội dung chương (.txt):</label>
+        <input id="uploadedFile" type="file" name="uploadedFile" class="form-control" accept=".txt" required />
+        <span class="text-muted">Chỉ hỗ trợ tệp .txt</span>
+    </div>
+
+    <button type="submit" class="btn btn-success">📥 Lưu chương</button>
+    <a asp-action="Index" asp-route-bookId="@ViewBag.BookId" class="btn btn-secondary">🔙 Quay lại</a>
+</form>

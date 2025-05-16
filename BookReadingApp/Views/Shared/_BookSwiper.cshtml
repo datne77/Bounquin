@@ -1,0 +1,36 @@
+﻿@model IEnumerable<BookReadingApp.Models.Book>
+@{
+    var isRecommended = ViewData["IsRecommended"] as bool? ?? false;
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="swiper swiper-books">
+        <div class="swiper-wrapper">
+            @foreach (var book in Model)
+            {
+                <div class="swiper-slide">
+                    <div class="book-card">
+                        <a asp-controller="Chapter" asp-action="Index" asp-route-bookId="@book.Id">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" />
+                            <div class="book-card-title">@book.Title</div>
+                        </a>
+
+                        @if (isRecommended)
+                        {
+                            <p class="text-muted small mb-1">
+                                <i class="bi bi-eye-fill"></i> @book.ViewCount lượt đọc
+                            </p>
+
+                        }
+                    </div>
+                </div>
+
+            }
+        </div>
+
+        <!-- Nút điều hướng -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+}

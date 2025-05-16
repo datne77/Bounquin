@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Trang Chủ - Bouquin";
+}
+
+<!-- Banner Chào Mừng -->
+<div class="hero-section">
+    <h1> Chào mừng bạn đến với <span class="highlight">Bouquin</span></h1>
+    <p>Khám phá hàng ngàn câu chuyện hấp dẫn từ cộng đồng độc giả và tác giả.</p>
+    <a asp-controller="Book" asp-action="Index" class="btn btn-primary">📖 Bắt đầu đọc ngay</a>
+    <a asp-controller="Account" asp-action="Register" class="btn btn-outline-success">✍ Đăng ký tác giả</a>
+</div>
+
+<!-- Hiển thị sách mới nhất -->
+<h2 class="section-title">📚 Sách Mới Nhất</h2>
+<div class="book-list">
+    @foreach (var book in ViewBag.LatestBooks ?? new List<BookReadingApp.Models.Book>())
+    {
+        <div class="book-card">
+            <a asp-controller="Chapter" asp-action="Index" asp-route-bookId="@book.Id">
+                <img src="@book.CoverImageUrl" alt="@book.Title">
+                <h5>@book.Title</h5>
+                <p class="author">✍ @book.Author</p>
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Lợi ích khi tham gia -->
+<div class="benefits-section">
+    <h2>🎉 Lợi ích khi tham gia</h2>
+    <ul>
+        <li>📖 Đọc hàng ngàn truyện miễn phí</li>
+        <li>✍ Sáng tác và chia sẻ câu chuyện của bạn</li>
+        <li>💬 Tham gia cộng đồng độc giả sôi động</li>
+    </ul>
+    <a asp-controller="Account" asp-action="Register" class="btn btn-warning">Đăng ký ngay</a>
+</div>
+
+<!-- CSS -->
+<style>
+    /* Hero Section */
+    .hero-section {
+        text-align: center !important;
+        padding: 80px 20px !important;
+        background: linear-gradient(to right, #8B5A2B, #5A3825) !important; /* Nâu trầm cổ điển */
+        color: #FAF3DD !important; /* Màu be nhẹ cho chữ */
+        border-radius: 10px !important;
+        margin-bottom: 40px !important;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
+        border: 2px solid #D2B48C !important; /* Viền màu nâu sáng */
+    }
+
+        /* Chữ in đậm */
+        .hero-section .highlight {
+            font-weight: bold !important;
+            color: #FFD700 !important; /* Màu vàng hoàng gia */
+            text-shadow: 2px 2px 5px rgba(255, 215, 0, 0.3) !important;
+        }
+
+        /* Nút trong Hero */
+        .hero-section a {
+            margin: 10px !important;
+            padding: 12px 20px !important;
+            font-size: 18px !important;
+            border-radius: 8px !important;
+            background: #D2691E !important; /* Cam đất cổ điển */
+            color: white !important;
+            font-weight: bold !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease-in-out !important;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3) !important;
+        }
+
+            /* Hover hiệu ứng cho nút */
+            .hero-section a:hover {
+                background: #A0522D !important; /* Màu nâu sáng hơn */
+                transform: translateY(-2px) !important;
+                box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3) !important;
+            }
+
+
+    /* Sách mới nhất */
+    .section-title {
+        margin-top: 40px;
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .book-list {
+        display: flex;
+        overflow-x: auto;
+        gap: 15px;
+        padding: 10px;
+        justify-content: center;
+    }
+
+    .book-card {
+        width: 200px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .book-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .book-card h5 {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .book-card .author {
+            font-size: 14px;
+            color: #888;
+        }
+
+    /* Lợi ích khi tham gia */
+    .benefits-section {
+        margin-top: 40px;
+        text-align: center;
+        background: #f5f5f5;
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+        .benefits-section h2 {
+            color: #d35400;
+        }
+
+        .benefits-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-section li {
+            font-size: 18px;
+            padding: 5px 0;
+        }
+</style>

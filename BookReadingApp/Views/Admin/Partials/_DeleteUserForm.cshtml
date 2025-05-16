@@ -1,0 +1,60 @@
+﻿@model List<BookReadingApp.Models.ViewModels.UserViewModel>
+
+<h4>Chọn người dùng cần xóa</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Vai trò</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.FullName</td>
+                <td>@user.Role</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteUser('@user.Email')">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmDeleteUser(email) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Xóa người dùng này sẽ không thể khôi phục!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("DeleteUser", "Admin")',
+                    type: 'POST',
+                    data: { email: email },
+                    success: function (res) {
+                        Swal.fire('Đã xóa!', res, 'success');
+                        loadDeleteUserForm(); // Gọi lại danh sách
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Lỗi!', xhr.responseText, 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>

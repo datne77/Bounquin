@@ -1,0 +1,65 @@
+﻿@model IEnumerable<BookReadingApp.Models.BannerSlide>
+@{
+    ViewBag.Title = "Quản lý Banner";
+}
+
+<h2 class="mb-4">🎞️ Danh sách Banner</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">➕ Thêm Banner</a>
+
+
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Ảnh</th>
+            <th>Tiêu đề</th>
+            <th>Sách liên kết</th>
+            <th>Thứ tự</th>
+            <th>Hiển thị</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var banner in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@banner.ImageUrl" style="height: 60px;" />
+                </td>
+                <td>@banner.Title</td>
+                <td>
+                    @if (banner.Book != null)
+                    {
+                        <span>@banner.Book.Title</span>
+                    }
+                    else if (banner.LinkToBookId.HasValue)
+                    {
+                        <span class="text-danger">[Id=@banner.LinkToBookId] (Không tìm thấy sách)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">(Không liên kết)</span>
+                    }
+                </td>
+                <td>@banner.SortOrder</td>
+                <td>
+                    @if (banner.IsActive)
+                    {
+                        <span class="text-success">✅</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">❌</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@banner.Id" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                    <form asp-action="Delete" asp-route-id="@banner.Id" method="post" class="d-inline">
+                        <button class="btn btn-danger btn-sm" onclick="return confirm('Xác nhận xóa banner này?')">🗑️ Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

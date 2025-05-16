@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Trang quản lý người dùng";
+    
+}
+
+<div class="container">
+    <!-- Header -->
+    <h2 class="text-center text-primary mb-4">Trang quản lý người dùng</h2>
+
+    <div class="row">
+        <!-- Navigator Menus -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadUserList()">📋 Danh sách người dùng</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadAddUserForm()">➕ Thêm người dùng</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadEditUserForm()">✏️ Sửa người dùng</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadDeleteUserForm()">❌ Xóa người dùng</a>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="col-md-9" id="mainContent">
+            <p class="text-muted">Đang tải dữ liệu...</p>
+        </div>
+    </div>
+   
+    
+</div>
+@section Scripts {
+    <script>
+        function loadUserList() {
+            $.get("/Admin/LoadUserList", function (data) {
+                $("#mainContent").html(data);
+            });
+        }
+
+        function loadAddUserForm() {
+            $.get("/Admin/LoadAddUserForm", function (data) {
+                $("#mainContent").html(data);
+            });
+        }
+
+
+        function loadEditUserForm() {
+            $.get("/Admin/LoadEditUserForm", function (data) {
+                $("#mainContent").html(data);
+            });
+        }
+
+
+        function loadDeleteUserForm() {
+            $.get("/Admin/LoadDeleteUserForm", function (data) {
+                $("#mainContent").html(data);
+            });
+        }
+
+
+        
+        $(document).ready(function () {
+            loadUserList();
+        });
+    </script>
+            }

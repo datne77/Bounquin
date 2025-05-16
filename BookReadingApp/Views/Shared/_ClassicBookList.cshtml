@@ -1,0 +1,40 @@
+﻿@model List<BookReadingApp.Models.ClassicBookEntry>
+
+@if (Model != null && Model.Any())
+{
+    <div class="swiper classic-swiper">
+        <div class="swiper-wrapper">
+            @foreach (var entry in Model)
+            {
+                var book = entry.Book;
+                <div class="swiper-slide">
+                    <a asp-controller="Chapter" asp-action="Index" asp-route-bookId="@book.Id" class="text-decoration-none text-dark">
+                        <div class="card">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" />
+
+                            <div class="card-body">
+                                <div>
+                                    <h5>@book.Title</h5>
+                                    <p>@book.Description</p>
+                                </div>
+                                <div class="text-muted small">
+                                    <i class="bi bi-eye"></i> @book.ViewCount lượt đọc 
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+
+            
+        </div>
+
+        <!-- Nút điều hướng -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+}
+else
+{
+    <p class="text-muted">Chưa có tác phẩm kinh điển nào được chọn.</p>
+}
